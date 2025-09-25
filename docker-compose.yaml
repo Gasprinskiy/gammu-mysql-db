@@ -1,0 +1,21 @@
+services:
+  gammu-mysql-db:
+    image: mariadb:11
+    container_name: gammu-mysql
+    restart: always
+    networks:
+      - sms_services
+    environment:
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+      MYSQL_DATABASE: $DB
+      MYSQL_USER: $DB_USER
+      MYSQL_PASSWORD: $DB_PASSWORD
+    ports:
+      - "127.0.0.1:5321:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d
+
+networks:
+  sms_services:
+    external: true
