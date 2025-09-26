@@ -1,7 +1,7 @@
 # Gammu MySQL Database
 
 This repository provides a **MySQL/MariaDB database schema and Docker setup** for [Gammu SMSD](https://wammu.eu/docs/manual/smsd/).
-It is used to store incoming and outgoing SMS messages when Gammu SMSD is running inside a container or on a server.
+It is used to store incoming and outgoing SMS messages when Gammu SMSD is running inside a container or directly on a server.
 
 ---
 
@@ -17,13 +17,16 @@ It is used to store incoming and outgoing SMS messages when Gammu SMSD is runnin
 ## Prerequisites
 
 - Docker and Docker Compose installed
-- A common Docker network (so the SMSD container can connect to this DB)
+- Optional: a common Docker network if you also want to containerize the **Gammu SMSD** service
 
-Create the network if you don’t have it yet:
+👉 If you plan to run `gammu-smsd` in a container, create the network:
 
 ```bash
-docker network create sms_services
+./create_sms_services_network.sh
 ````
+
+👉 If you plan to run `gammu-smsd` directly on the host,
+you can **comment out** the `networks` section in the `docker-compose.yml`.
 
 ---
 
@@ -51,7 +54,7 @@ docker network create sms_services
    ./start_docker.sh
    ```
 
-   This will run MySQL/MariaDB with the Gammu SMSD schema automatically applied and attach it to the `sms_services` network.
+   This will run MySQL/MariaDB with the Gammu SMSD schema automatically applied.
 
 ---
 
@@ -65,7 +68,7 @@ Once the database container is running:
   [smsd]
   service = sql
   driver = native_mysql
-  host = sms-db
+  host = gammu-mysql-db
   user = smsuser
   password = yourpassword
   database = smsdb
@@ -73,10 +76,12 @@ Once the database container is running:
 
 * Gammu SMSD will then store all incoming/outgoing SMS in this database.
 
+If you also need to run **Gammu SMSD** in a container, use the companion repository:
+📦 [gammu-smsd-container](https://github.com/Gasprinskiy/gammu-smsd-container)
+
 ---
 
 ## Data Persistence
 
 The database container uses a Docker volume to persist data, so your SMS history will not be lost if the container is restarted.
 
----
